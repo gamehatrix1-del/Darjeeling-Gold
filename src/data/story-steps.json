@@ -1,0 +1,83 @@
+[
+ {
+  "stage": 0,
+  "startProgress": 0,
+  "endProgress": 0.14,
+  "alignment": "center",
+  "eyebrow": "DARJEELING FIRST FLUSH — 2026 HARVEST",
+  "headline": "Brewed in gold.",
+  "body": "Hand-plucked at dawn, 2,000 metres up in the Himalayan foothills.",
+  "cta": {
+   "primary": "SHOP FIRST FLUSH",
+   "primaryHref": "#shop",
+   "secondary": "WATCH THE BREW ↓",
+   "secondaryAction": "scroll"
+  }
+ },
+ {
+  "stage": 1,
+  "startProgress": 0.14,
+  "endProgress": 0.3,
+  "alignment": "right",
+  "eyebrow": "01 — THE HARVEST",
+  "headline": "Two leaves and a bud.",
+  "body": "Plucked by hand in the morning mist, then withered and rolled within hours so the spring flavour stays bright.",
+  "badge": "SINGLE ESTATE · HAND-PLUCKED",
+  "image": "img/botanicals.webp"
+ },
+ {
+  "stage": 2,
+  "startProgress": 0.3,
+  "endProgress": 0.46,
+  "alignment": "left",
+  "eyebrow": "02 — THE DESCENT",
+  "headline": "Into the glass.",
+  "body": "Whole leaf, never dust. Each leaf drifts down through crystal-clear walls, waiting quietly to awaken.",
+  "badge": null
+ },
+ {
+  "stage": 3,
+  "startProgress": 0.46,
+  "endProgress": 0.64,
+  "alignment": "right",
+  "eyebrow": "03 — THE AWAKENING",
+  "headline": "The water stirs.",
+  "body": "Water just off the boil wakes the leaf. Steam rises, carrying spring blossom and the first hint of muscatel.",
+  "badge": "OPTIMAL BREW: 85°C"
+ },
+ {
+  "stage": 4,
+  "startProgress": 0.64,
+  "endProgress": 0.8,
+  "alignment": "left",
+  "eyebrow": "04 — THE INFUSION",
+  "headline": "A colour of gold.",
+  "body": "Clarity turns to warmth. Within three minutes the cup glows a bright, golden amber.",
+  "badge": null
+ },
+ {
+  "stage": 5,
+  "startProgress": 0.8,
+  "endProgress": 0.91,
+  "alignment": "right",
+  "eyebrow": "05 — THE POUR",
+  "headline": "Poured, slowly.",
+  "body": "Light, floral and naturally sweet — a cup that rewards patience.",
+  "badge": null
+ },
+ {
+  "stage": 6,
+  "startProgress": 0.91,
+  "endProgress": 1.0,
+  "alignment": "center",
+  "eyebrow": "06 — THE RITUAL",
+  "headline": "Your moment of calm.",
+  "body": "Single-estate Darjeeling, freshly packed and shipped free over ₹999.",
+  "cta": {
+   "primary": "SHOP THE COLLECTION",
+   "primaryHref": "#shop",
+   "secondary": "WATCH AGAIN ↺",
+   "secondaryAction": "again"
+  }
+ }
+]
