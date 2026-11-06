@@ -42,11 +42,12 @@ export class CanvasScroller {
     })
   }
 
-  /** Resolves as soon as frame 1 is drawn (hero appears immediately). The rest stream in coarse-to-fine:
-   *  every 4th frame first (whole timeline scrubbable after ~25% of the data, gaps are cross-faded),
-   *  then the in-between frames fill in. */
-  async preload(): Promise<void> {
-    await this.load(1)
+  /** Draws frame 1 immediately, then fetches EVERY frame (coarse-to-fine order, 10 in parallel).
+   *  Resolves when all are in the cache. onProgress(done, total) fires per frame. */
+  async preload(onProgress?: (done: number, total: number) => void): Promise<void> {
+    let done = 0
+    const tick = () => onProgress?.(++done, this.total)
+    await this.load(1); tick()
     this.draw(true)
     const order: number[] = []
     for (const [start, step] of [[5, 4], [3, 4], [2, 2]] as const) {
@@ -54,8 +55,19 @@ export class CanvasScroller {
     }
     if (!order.includes(this.total)) order.unshift(this.total)
     let next = 0
-    const worker = async () => { while (next < order.length) { const i = order[next++]; if (!this.images[i - 1]) await this.load(i) } }
-    ;(async () => { await Promise.all(Array.from({ length: 6 }, worker)) })()
+    const worker = async () => { while (next < order.length) { const i = order[next++]; if (!this.images[i - 1]) await this.load(i); tick() } }
+    await Promise.all(Array.from({ length: 10 }, worker))
+  }
+
+  private warmed = new Set<number>()
+  /** Pre-decode the frames around the playhead so the first scrub through them never stutters
+   *  (decoding every frame up front would need several GB of RAM). */
+  private warm(i: number): void {
+    for (let k = -4; k <= 10; k++) {
+      const j = i + k, img = this.images[j]
+      if (img && !this.warmed.has(j)) { this.warmed.add(j); img.decode().catch(() => {}) }
+    }
+    if (this.warmed.size > 160) this.warmed.clear() // let the browser reclaim old decodes
   }
 
   /** progress 0..1 -> fractional frame. */
@@ -77,6 +89,7 @@ export class CanvasScroller {
     const i0 = Math.floor(this.pos), frac = this.pos - i0
     const a = this.nearest(i0), b = this.nearest(Math.min(this.total - 1, i0 + 1))
     if (a < 0) return
+    this.warm(i0)
     const alpha = b === a || frac < 0.015 ? 0 : frac
     const v = this.view
     const key = `${a}|${b}|${Math.round(alpha * 64)}|${v.offsetX.toFixed(4)}|${v.offsetY.toFixed(4)}|${v.zoom.toFixed(4)}`

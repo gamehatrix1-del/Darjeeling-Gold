@@ -19,3 +19,8 @@ Single-page site (Vite + TypeScript): `/` (`index.html`) is the "Darjeeling Gold
 - Styles: `src/styles/shop.css` (light theme tokens in `tokens.css`). Reduced motion => static, unpinned story (see `main.ts`).
 - Frames are 1920x1080 (lanczos + unsharp) for crispness; text uses `transform:none` at rest to avoid sub-pixel blur.
 - Demo data only: reviews, ratings, stock and the checkout button are placeholders.
+
+## Boot loader
+`#loader` (index.html) blocks the page until ALL frames + story images + fonts are fetched (progress bar, scroll locked,
+Skip button after 8 s, hard cap 30 s). Frames are fetched coarse-to-fine, 10 in parallel (`CanvasScroller.preload`) and
+frames around the playhead are pre-decoded (`warm`). Reduced-motion users skip it (static story).

@@ -9,7 +9,24 @@
 <meta property="og:description" content="Hand-plucked first flush, second flush, oolong and white teas from the Himalayan foothills. Free shipping over ₹999.">
 <meta property="og:image" content="https://gamehatrix1-del.github.io/Darjeeling-Gold/img/ripple.webp">
 <meta property="og:type" content="website">
+<style>
+html.booting{overflow:hidden}
+#loader{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:#0d0b08;color:#fdfcf7;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;transition:opacity .7s ease,visibility .7s}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none}
+#loader .ld-in{display:flex;flex-direction:column;align-items:center;gap:22px;width:min(320px,80vw);text-align:center}
+#loader .ld-brand{display:flex;flex-direction:column;align-items:center;line-height:1}
+#loader .ld-brand span{font-size:20px;letter-spacing:.5em;margin-right:-.5em;font-weight:500}
+#loader .ld-brand em{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:26px;color:#e5b869;margin-top:6px}
+#loader .ld-bar{width:100%;height:2px;background:rgba(255,255,255,.14);border-radius:2px;overflow:hidden}
+#loader .ld-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#b8892f,#e5b869);transform:scaleX(0);transform-origin:left;transition:transform .25s ease-out}
+#loader .ld-txt{margin:0;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(253,252,247,.7);font-variant-numeric:tabular-nums}
+#loader .ld-skip{min-height:44px;padding:0 18px;border:1px solid rgba(253,252,247,.35);border-radius:99px;background:none;color:inherit;font:500 11px/1 inherit;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+#loader .ld-skip:hover{border-color:#e5b869;color:#e5b869}
+#loader .ld-skip[hidden]{display:none}
+</style>
+<noscript><style>#loader{display:none}html.booting{overflow:auto}</style></noscript>
 <script>
+document.documentElement.classList.add('booting');
 // Pick the right frame set before anything else loads: 1280px for phones / normal screens / data-saver, 1920px for large + retina.
 (function(){var c=navigator.connection||{},w=innerWidth*Math.min(devicePixelRatio||1,2),dir=(c.saveData||w<=1700)?'frames-md':'frames';window.__frameDir=dir;
 var l=document.createElement('link');l.rel='preload';l.as='image';l.href=dir+'/frame_0001.webp';l.setAttribute('fetchpriority','high');document.head.appendChild(l)})();
@@ -18,6 +35,14 @@ var l=document.createElement('link');l.rel='preload';l.as='image';l.href=dir+'/f
 <meta name="description" content="Single-estate Darjeeling teas from the Himalayan foothills. First flush, second flush, oolong and white teas — freshly packed and shipped free over ₹999.">
 </head>
 <body>
+<div id="loader" role="status" aria-live="polite" aria-label="Loading">
+  <div class="ld-in">
+    <div class="ld-brand"><span>DARJEELING</span><em>Gold</em></div>
+    <div class="ld-bar" aria-hidden="true"><i id="ldBar"></i></div>
+    <p class="ld-txt">Steeping the experience · <span id="ldPct">0%</span></p>
+    <button type="button" class="ld-skip" id="ldSkip" hidden>Skip</button>
+  </div>
+</div>
 <a class="skip" href="#shop">Skip to shop</a>
 
 <div class="site-head" id="head">

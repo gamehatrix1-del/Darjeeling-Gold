@@ -41,12 +41,32 @@ const stepHTML = (s: Step, dock = false) => {
     ${dock ? '' : ctaHTML(s, 'ctas')}`
 }
 
+/* ---- boot loader: everything (all frames, story images, fonts) is fetched BEFORE the site is revealed ---- */
+const loaderEl = document.getElementById('loader')!
+const ldBar = document.getElementById('ldBar') as HTMLElement
+const ldPct = document.getElementById('ldPct') as HTMLElement
+const ldSkip = document.getElementById('ldSkip') as HTMLButtonElement
+const setBoot = (v: number) => { const p = Math.min(1, Math.max(0, v)); ldBar.style.transform = `scaleX(${p})`; ldPct.textContent = `${Math.round(p * 100)}%` }
+const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
+const preloadImage = (src: string) => new Promise<void>(r => { const i = new Image(); i.onload = i.onerror = () => r(); i.src = src })
+const BOOT_EXTRAS = ['img/ripple.webp', 'img/botanicals.webp']
+const MAX_BOOT_MS = 30000
+
 async function init() {
   initStore() // storefront works regardless of the hero
 
   const steps = stepsData as Step[]
   const lenis = new Lenis({ lerp: reduced ? 1 : 0.09, anchors: false })
+  lenis.stop() // scroll stays locked until boot finishes
   bindScroll(lenis)
+  const finishBoot = () => {
+    setBoot(1)
+    loaderEl.classList.add('done')
+    document.documentElement.classList.remove('booting')
+    lenis.start()
+    ScrollTrigger.refresh()
+    setTimeout(() => loaderEl.remove(), 900)
+  }
   lenis.on('scroll', ScrollTrigger.update)
   gsap.ticker.add(t => lenis.raf(t * 1000))
   gsap.ticker.lagSmoothing(0)
@@ -100,6 +120,7 @@ async function init() {
       const img = i >= 5 ? 'img/ripple.webp' : frameUrl(Math.max(1, Math.round((s.startProgress + s.endProgress) / 2 * (TOTAL_FRAMES - 1)) + 1))
       return `<article class="static-step ${i % 2 ? 'flip' : ''}"><img src="${img}" alt="" loading="${i ? 'lazy' : 'eager'}"><div class="static-copy">${stepHTML(s)}</div></article>`
     }).join('')
+    finishBoot() // static story: no frame scrubber, nothing heavy to wait for
     return
   }
 
@@ -121,8 +142,19 @@ async function init() {
   })
 
   const scroller = new CanvasScroller({ canvas, totalFrames: TOTAL_FRAMES, framePath: frameUrl })
-  await scroller.preload() // resolves after frame 1 -> hero shows immediately
+  // Fetch everything now. Progress = frames + extra images + fonts. Skip button after 8 s, hard cap at 30 s.
+  const units = TOTAL_FRAMES + BOOT_EXTRAS.length + 1
+  let doneUnits = 0
+  const bump = () => setBoot(++doneUnits / units)
+  const all = Promise.all([
+    scroller.preload(() => bump()),
+    ...BOOT_EXTRAS.map(src => preloadImage(src).then(bump)),
+    (document.fonts?.ready ?? Promise.resolve()).then(bump),
+  ])
+  const skipped = new Promise<void>(r => { setTimeout(() => { ldSkip.hidden = false }, 8000); ldSkip.addEventListener('click', () => r()) })
+  await Promise.race([all, skipped, sleep(MAX_BOOT_MS)])
   root.classList.remove('loading')
+  finishBoot()
   // non-critical hero art loads after first paint, off the critical path
   const idle = (f: () => void) => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(f, { timeout: 2500 }) : setTimeout(f, 1200))
   idle(() => { ripple.style.backgroundImage = "url('img/ripple.webp')" })
